@@ -1,0 +1,46 @@
+package com.order.controller;
+
+import java.util.List;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.order.dto.OrderDTO;
+import com.order.service.OrderService;
+
+import lombok.RequiredArgsConstructor;
+
+@RestController
+@RequestMapping("/orders")
+@RequiredArgsConstructor
+public class OrderController {
+
+	private final OrderService orderService;
+
+	@PostMapping
+	public ResponseEntity<OrderDTO> createOrder(@RequestBody OrderDTO order) {
+		OrderDTO createOrder = orderService.createOrder(order);
+		return new ResponseEntity<OrderDTO>(createOrder, HttpStatus.CREATED);
+	}
+
+	@GetMapping("/user/{userId}")
+	public ResponseEntity<List<OrderDTO>> getOrdersByUser(@PathVariable Long userId) {
+		List<OrderDTO> ordersByUser = orderService.getOrdersByUser(userId);
+		return new ResponseEntity<>(ordersByUser, HttpStatus.FOUND);
+	}
+
+	@GetMapping("/{orderId}")
+	public ResponseEntity<OrderDTO> getOrderById(@PathVariable Long orderId) {
+		OrderDTO orderById = orderService.getOrderById(orderId);
+		return new ResponseEntity<OrderDTO>(orderById, HttpStatus.OK);
+	}
+	
+	
+
+}

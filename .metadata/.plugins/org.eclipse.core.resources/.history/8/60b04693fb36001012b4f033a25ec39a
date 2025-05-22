@@ -1,0 +1,8 @@
+package com.cart.client;
+
+public class Snippet {
+	public static void main(String[] args) {
+		UserServiceClient
+	}
+}
+

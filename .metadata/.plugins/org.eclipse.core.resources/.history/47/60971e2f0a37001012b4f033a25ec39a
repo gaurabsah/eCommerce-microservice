@@ -1,0 +1,30 @@
+package com.payment.service;
+
+import org.modelmapper.ModelMapper;
+import org.springframework.stereotype.Service;
+
+import com.payment.dao.PaymentDAO;
+import com.payment.dto.PaymentDTO;
+
+import lombok.RequiredArgsConstructor;
+
+@Service
+@RequiredArgsConstructor
+public class PaymentServiceImpl implements PaymentService{
+	private final PaymentDAO dao;
+	private final ModelMapper modelMapper;
+	
+	@Override
+	public PaymentDTO processPayment(PaymentDTO dto) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	@Override
+	public PaymentDTO getPaymentById(Long paymentId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	
+
+}

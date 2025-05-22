@@ -1,0 +1,43 @@
+package com.payment.service;
+
+import java.time.LocalDateTime;
+
+import org.modelmapper.ModelMapper;
+import org.springframework.stereotype.Service;
+
+import com.payment.dao.PaymentDAO;
+import com.payment.dto.PaymentDTO;
+import com.payment.entity.Payment;
+import com.payment.exception.ResourcesNotFoundException;
+
+import lombok.RequiredArgsConstructor;
+
+@Service
+@RequiredArgsConstructor
+public class PaymentServiceImpl implements PaymentService {
+	private final PaymentDAO dao;
+	private final ModelMapper modelMapper;
+
+	@Override
+	public PaymentDTO processPayment(PaymentDTO dto) {
+		Payment payment = modelMapper.map(dto, Payment.class);
+		payment.setTimestamp(LocalDateTime.now());
+
+		// Simulate payment processing
+		if (payment.getAmount() > 0) {
+			payment.setStatus("SUCCESS");
+		} else {
+			payment.setStatus("FAILED");
+		}
+		Payment paid = dao.save(payment);
+
+		return modelMapper.map(paid, PaymentDTO.class);
+	}
+
+	@Override
+	public PaymentDTO getPaymentById(Long paymentId) {
+		dao.findById(paymentId).orElseThrow(()-> new ResourcesNotFoundException("Payment Not Found"));
+		return null;
+	}
+
+}

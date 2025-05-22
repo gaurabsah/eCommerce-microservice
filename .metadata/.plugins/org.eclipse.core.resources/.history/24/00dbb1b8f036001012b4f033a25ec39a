@@ -1,0 +1,20 @@
+package com.product.service;
+
+import java.util.List;
+
+import com.product.dto.ProductDTO;
+
+public interface ProductService {
+	
+	ProductDTO createProduct(ProductDTO productDto);
+
+	ProductDTO updateProduct(ProductDTO productDto, int productId);
+
+    void deleteProduct(int productId);
+
+    ProductDTO getProduct(int productId);
+
+    List<ProductDTO> getAllProducts(int pageNumber, int pageSize, String sortBy, String sortOrder);
+
+
+}

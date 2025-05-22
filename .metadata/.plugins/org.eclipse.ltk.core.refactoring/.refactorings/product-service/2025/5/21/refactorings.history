@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Copy element &apos;AppConfig.java&apos; to &apos;user-service/src/main/java/com.user.config&apos;&#x0A;- Original project: &apos;product-service&apos;&#x0A;- Destination element: &apos;user-service/src/main/java/com.user.config&apos;&#x0A;- Original element: &apos;com.product.config.AppConfig.java&apos;" description="Copy compilation unit" destination="=user-service/src\/main\/java=/optional=/true=/=/maven.pomderived=/true=/&lt;com.user.config" element1="/src\/main\/java=/optional=/true=/=/maven.pomderived=/true=/&lt;com.product.config{AppConfig.java" files="0" flags="589830" folders="0" id="org.eclipse.jdt.ui.copy" policy="org.eclipse.jdt.ui.copyResources" stamp="1747912449708" units="1" version="1.0"/>
+</session>

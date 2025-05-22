@@ -1,0 +1,40 @@
+package com.cart.service;
+
+import java.util.List;
+
+import org.modelmapper.ModelMapper;
+import org.springframework.stereotype.Service;
+
+import com.cart.dto.CartItemDTO;
+import com.cart.entity.CartItem;
+import com.cart.repository.CartItemRepository;
+
+import lombok.RequiredArgsConstructor;
+
+@Service
+@RequiredArgsConstructor
+public class CartItemServiceImpl implements CartItemService {
+
+	private final CartItemRepository cartItemRepository;
+	private final ModelMapper modelMapper;
+
+	@Override
+	public CartItemDTO addToCart(CartItemDTO item) {
+		CartItem cartItem = modelMapper.map(item, CartItem.class);
+		CartItem addedItems = cartItemRepository.save(cartItem);
+		return modelMapper.map(addedItems, CartItemDTO.class);
+	}
+
+	@Override
+	public List<CartItemDTO> getCartItems(Long userId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void clearCart(Long userId) {
+		// TODO Auto-generated method stub
+
+	}
+
+}

@@ -1,0 +1,22 @@
+package com.cart.dto;
+
+import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+public class CartItemDTO {
+
+	@NotNull(message = "User ID can't be null")
+	private Long userId;
+
+	@NotNull(message = "Product ID can't be null")
+	private Long productId;
+
+	@NotNull(message = "Quantity can't be null")
+	private int quantity;
+
+}

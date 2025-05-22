@@ -1,0 +1,32 @@
+package com.user.service;
+
+import org.modelmapper.ModelMapper;
+import org.springframework.stereotype.Service;
+
+import com.user.dao.UserDAO;
+import com.user.dto.UserDTO;
+import com.user.entity.User;
+import com.user.exception.ResourcesNotFoundException;
+
+import lombok.RequiredArgsConstructor;
+
+@Service
+@RequiredArgsConstructor
+public class UserServiceImpl implements UserService {
+	private final UserDAO userDAO;
+	private final ModelMapper modelMapper;
+
+	@Override
+	public UserDTO createUser(UserDTO userDTO) {
+		User user = modelMapper.map(userDTO, User.class);
+		User newUser = userDAO.save(user);
+		return modelMapper.map(newUser, UserDTO.class);
+	}
+
+	@Override
+	public UserDTO getUserById(String Id) {
+		userDAO.findById(Id).orElseThrow(() -> new ResourcesNotFoundException("User Not Found"));
+		return null;
+	}
+
+}

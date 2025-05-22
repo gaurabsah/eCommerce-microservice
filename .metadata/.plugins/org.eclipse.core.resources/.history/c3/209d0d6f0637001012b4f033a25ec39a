@@ -1,0 +1,5 @@
+@FeignClient(name = "cart-service")
+public interface CartServiceClient {
+    @DeleteMapping("/cart/clear/{userId}")
+    void clearCart(@PathVariable("userId") Long userId);
+}

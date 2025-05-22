@@ -1,0 +1,52 @@
+package com.payment.service;
+
+import java.time.LocalDateTime;
+
+import org.modelmapper.ModelMapper;
+import org.springframework.stereotype.Service;
+
+import com.payment.client.OrderServiceClient;
+import com.payment.dao.PaymentDAO;
+import com.payment.dto.PaymentDTO;
+import com.payment.entity.Payment;
+import com.payment.exception.ResourcesNotFoundException;
+
+import lombok.RequiredArgsConstructor;
+
+@Service
+@RequiredArgsConstructor
+public class PaymentServiceImpl implements PaymentService {
+	private final PaymentDAO dao;
+	private final ModelMapper modelMapper;
+	private final OrderServiceClient orderServiceClient;
+
+	@Override
+	public PaymentDTO processPayment(PaymentDTO dto) {
+		Payment payment = modelMapper.map(dto, Payment.class);
+		payment.setTimestamp(LocalDateTime.now());
+
+		// Simulate payment processing
+		if (payment.getAmount() > 0) {
+			payment.setStatus("SUCCESS");
+		} else {
+			payment.setStatus("FAILED");
+		}
+		Payment paid = dao.save(payment);
+		
+		// Update order status after successful payment
+        try {
+            orderServiceClient.updateOrderStatus(payment.getOrderId(), payment.getStatus());
+        } catch (Exception e) {
+            throw new SomethingWentWrongException("Failed to update order status: " + e.getMessage());
+        }
+
+		return modelMapper.map(paid, PaymentDTO.class);
+	}
+
+	@Override
+	public PaymentDTO getPaymentById(Long paymentId) {
+		dao.findById(paymentId).orElseThrow(()-> new ResourcesNotFoundException("Payment Not Found"));
+		return null;
+	}
+
+}

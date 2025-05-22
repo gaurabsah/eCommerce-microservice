@@ -1,0 +1,7 @@
+package com.cart.exception;
+
+import com.cart.dto.CartItemDTO;
+
+public class InsufficientResourcesException extends CartItemDTO {
+
+}

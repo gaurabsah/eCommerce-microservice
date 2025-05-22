@@ -1,0 +1,88 @@
+package com.product.service;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.modelmapper.ModelMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.stereotype.Service;
+
+import com.product.dao.ProductDAO;
+import com.product.dto.ProductDTO;
+import com.product.entity.Product;
+import com.product.exception.ResourceNotFoundException;
+
+import lombok.RequiredArgsConstructor;
+
+@Service
+@RequiredArgsConstructor
+public class ProductServiceImpl implements ProductService {
+
+	private final ProductDAO dao;
+	private final ModelMapper modelMapper;
+
+	private static final Logger log = LoggerFactory.getLogger(ProductServiceImpl.class);
+
+	@Override
+	public ProductDTO createProduct(ProductDTO productDto) {
+		log.info("inside createProduct()");
+		Product product = modelMapper.map(productDto, Product.class);
+		Product newproduct = dao.save(product);
+		log.info("Product Details saved successfully");
+		return modelMapper.map(newproduct, ProductDTO.class);
+	}
+
+	@Override
+	public ProductDTO updateProduct(ProductDTO productDto, int productId) {
+		log.info("inside updateProduct()");
+		Product product = dao.findById(productId).orElseThrow(() -> new ResourceNotFoundException("Product not found"));
+		product.setProductName(productDto.getProductName());
+		product.setProductDescription(productDto.getProductDescription());
+		product.setProductPrice(productDto.getProductPrice());
+		product.setDiscountedPrice(productDto.getDiscountedPrice());
+		product.setProductQuantity(productDto.getProductQuantity());
+		product.setActive(productDto.isActive());
+		product.setStock(productDto.isStock());
+		product.setProductImage(productDto.getProductImage());
+		Product updatedProduct = dao.save(product);
+		log.info("Product Details updated successfully");
+		return modelMapper.map(updatedProduct, ProductDTO.class);
+	}
+
+	@Override
+	public void deleteProduct(int productId) {
+		log.info("inside deleteProduct()");
+		Product product = dao.findById(productId).orElseThrow(() -> new ResourceNotFoundException("Product not found"));
+		dao.delete(product);
+		log.info("Product Details removed successfully");
+
+	}
+
+	@Override
+	public ProductDTO getProduct(int productId) {
+		log.info("inside getProduct()");
+		Product product = dao.findById(productId).orElseThrow(() -> new ResourceNotFoundException("Product not found"));
+		log.info("Product Details fetched successfully {}", product.toString());
+		return modelMapper.map(product, ProductDTO.class);
+	}
+
+	@Override
+	public List<ProductDTO> getAllProducts(int pageNumber, int pageSize, String sortBy, String sortOrder) {
+		log.info("inside getAllProducts()");
+		Sort sort = (sortOrder.equalsIgnoreCase("desc")) ? (Sort.by(sortBy).descending())
+				: (Sort.by(sortBy).ascending());
+		Pageable pageable = PageRequest.of(pageNumber, pageSize, sort);
+		Page<Product> page = dao.findAll(pageable);
+		List<Product> products = page.getContent();
+		List<ProductDTO> productDtos = products.stream().map(product -> modelMapper.map(product, ProductDTO.class))
+				.collect(Collectors.toList());
+		log.info("Products found: {}", productDtos.size());
+		return productDtos;
+	}
+
+}

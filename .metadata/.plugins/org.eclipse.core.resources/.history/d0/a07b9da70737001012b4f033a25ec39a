@@ -1,0 +1,8 @@
+spring.application.name=order-service
+
+server.port=8084
+#DB configuration
+spring.datasource.url = jdbc:postgresql://localhost:5432/productDB
+spring.datasource.username=postgres
+spring.datasource.password=admin
+spring.jpa.hibernate.ddl-auto=create-drop

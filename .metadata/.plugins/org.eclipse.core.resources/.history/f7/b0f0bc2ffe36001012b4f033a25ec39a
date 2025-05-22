@@ -1,0 +1,30 @@
+package com.user.service;
+
+import org.modelmapper.ModelMapper;
+import org.springframework.stereotype.Service;
+
+import com.user.dao.UserDAO;
+import com.user.dto.UserDTO;
+
+import lombok.RequiredArgsConstructor;
+
+@Service
+@RequiredArgsConstructor
+public class UserServiceImpl implements UserService{
+	private final UserDAO userDAO;
+	private final ModelMapper modelMapper;
+	
+	@Override
+	public UserDTO createUser(UserDTO user) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	@Override
+	public UserDTO getUserById(String Id) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	
+
+}

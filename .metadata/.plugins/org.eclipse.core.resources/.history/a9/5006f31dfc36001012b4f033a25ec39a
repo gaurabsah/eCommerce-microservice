@@ -1,0 +1,5 @@
+package com.cart.exception;
+
+public class ResourcesNotFoundException extends Exception {
+
+}

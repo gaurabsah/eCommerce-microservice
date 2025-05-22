@@ -1,0 +1,42 @@
+package com.order.service;
+
+import java.time.LocalDateTime;
+import java.util.List;
+
+import org.modelmapper.ModelMapper;
+import org.springframework.stereotype.Service;
+
+import com.order.dao.OrderDAO;
+import com.order.dto.OrderDTO;
+import com.order.model.Order;
+
+import lombok.RequiredArgsConstructor;
+
+@Service
+@RequiredArgsConstructor
+public class OrderServiceImpl implements OrderService {
+
+	private final OrderDAO orderDAO;
+	private final ModelMapper modelMapper;
+
+	@Override
+	public OrderDTO createOrder(OrderDTO orderDTO) {
+		Order order = modelMapper.map(orderDTO, Order.class);
+		order.setCreatedAt(LocalDateTime.now());
+		Order savedOrder = orderDAO.save(order);
+		return modelMapper.map(savedOrder, OrderDTO.class);
+	}
+
+	@Override
+	public List<OrderDTO> getOrdersByUser(Long orderId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public OrderDTO getOrderById(Long orderId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+}

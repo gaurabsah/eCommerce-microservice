@@ -1,0 +1,15 @@
+package com.cart.service;
+
+import java.util.List;
+
+import com.cart.entity.CartItem;
+
+public interface CartItemService {
+
+	CartItem addToCart(CartItem item);
+
+	List<CartItem> getCartItems(Long userId);
+
+	void clearCart(Long userId);
+
+}

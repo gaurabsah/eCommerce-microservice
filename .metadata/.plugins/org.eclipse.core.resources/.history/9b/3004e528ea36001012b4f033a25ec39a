@@ -1,0 +1,9 @@
+spring.application.name=cart-service
+
+server.port=8081
+
+#DB configuration
+spring.datasource.url = jdbc:mysql://localhost:3306/cartDB?createDatabaseIfNotExist=true
+spring.datasource.username=root
+spring.datasource.password=gaurabsah
+spring.jpa.hibernate.ddl-auto=create-drop

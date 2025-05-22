@@ -1,0 +1,54 @@
+package com.order.service;
+
+import java.time.LocalDateTime;
+import java.util.List;
+
+import org.modelmapper.ModelMapper;
+import org.springframework.stereotype.Service;
+
+import com.order.client.CartServiceClient;
+import com.order.dao.OrderDAO;
+import com.order.dto.OrderDTO;
+import com.order.exception.ResourcesNotFoundException;
+import com.order.exception.SomethingWentWrongException;
+import com.order.model.Order;
+
+import lombok.RequiredArgsConstructor;
+
+@Service
+@RequiredArgsConstructor
+public class OrderServiceImpl implements OrderService {
+
+	private final OrderDAO orderDAO;
+	private final ModelMapper modelMapper;
+	private final CartServiceClient cartServiceClient;
+
+	@Override
+	public OrderDTO createOrder(OrderDTO orderDTO) {
+		Order order = modelMapper.map(orderDTO, Order.class);
+		order.setCreatedAt(LocalDateTime.now());
+		order.setStatus("PENDING");
+		Order savedOrder = orderDAO.save(order);
+		// Clear the cart after placing the order
+		try {
+			cartServiceClient.clearCart(order.getUserId());
+		} catch (Exception e) {
+			throw new SomethingWentWrongException("Failed to clear cart for user:" + order.getUserId());
+		}
+
+		return modelMapper.map(savedOrder, OrderDTO.class);
+	}
+
+	@Override
+	public List<OrderDTO> getOrdersByUser(Long userId) {
+		List<Order> orders = orderDAO.findByUserId(userId);
+		return orders.stream().map(o -> modelMapper.map(o, OrderDTO.class)).toList();
+	}
+
+	@Override
+	public OrderDTO getOrderById(Long orderId) {
+		Order order = orderDAO.findById(orderId).orElseThrow(() -> new ResourcesNotFoundException("Order not found"));
+		return modelMapper.map(order, OrderDTO.class);
+	}
+
+}

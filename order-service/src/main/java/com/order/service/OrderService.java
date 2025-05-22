@@ -1,0 +1,17 @@
+package com.order.service;
+
+import java.util.List;
+
+import com.order.dto.OrderDTO;
+
+public interface OrderService {
+
+	OrderDTO createOrder(OrderDTO order);
+
+	List<OrderDTO> getOrdersByUser(Long userId);
+
+	OrderDTO getOrderById(Long orderId);
+
+	String updateOrderStatus(Long orderId, String status);
+
+}

@@ -1,0 +1,7 @@
+spring.application.name=product-service
+
+#DB configuration
+spring.datasource.url = jdbc:postgresql://localhost:5432/productDb
+spring.datasource.username=postgres
+spring.datasource.password=admin
+spring.jpa.hibernate.ddl-auto=update
