@@ -1,3 +1,48 @@
 server:
   port: 8888
   
+spring:
+  application:
+    name: api-gateway
+      
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+      routes:
+        - id: user-service
+          uri: lb://user-service
+          predicates:
+            - Path=/users/**
+        - id: product-service
+          uri: lb://product-service
+          predicates:
+            - Path=/products/**
+        - id: cart-service
+          uri: lb://cart-service
+          predicates:
+            - Path=/cart/**
+        - id: order-service
+          uri: lb://order-service
+          predicates:
+            - Path=/orders/**
+        - id: payment-service
+          uri: lb://payment-service
+          predicates:
+            - Path=/payments/**
+
+#      default-filters:
+#        - name: JwtAuthenticationFilter
+        
+        
+  config:
+    import: optional:configserver:http://localhost:9090
+            
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka
+
+#jwt:
+#  secret: mysecretkey123456

@@ -13,13 +13,16 @@ import com.user.dto.UserDTO;
 import com.user.service.UserService;
 
 import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping("/users")
-@RequiredArgsConstructor
 public class UserController {
+
 	private final UserService userService;
+
+	public UserController(UserService userService) {
+		this.userService = userService;
+	}
 
 	@PostMapping
 	public ResponseEntity<UserDTO> register(@Valid @RequestBody UserDTO dto) {
@@ -28,9 +31,15 @@ public class UserController {
 	}
 
 	@GetMapping("/{id}")
-	public ResponseEntity<UserDTO> getUser(@PathVariable String id) {
+	public ResponseEntity<UserDTO> getUser(@PathVariable(name = "id") String id) {
 		UserDTO dto = userService.getUserById(id);
-		return new ResponseEntity<UserDTO>(dto, HttpStatus.FOUND);
+		return new ResponseEntity<UserDTO>(dto, HttpStatus.OK);
 	}
+	
+	@GetMapping("/email/{email}")
+	public ResponseEntity<UserDTO> getUserByEmail(@PathVariable String email) {
+	    return ResponseEntity.ok(userService.getUserByEmail(email));
+	}
+
 
 }

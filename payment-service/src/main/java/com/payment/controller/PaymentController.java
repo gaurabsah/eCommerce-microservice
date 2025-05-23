@@ -1,5 +1,6 @@
 package com.payment.controller;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,13 +13,11 @@ import org.springframework.web.bind.annotation.RestController;
 import com.payment.dto.PaymentDTO;
 import com.payment.service.PaymentService;
 
-import lombok.RequiredArgsConstructor;
-
 @RestController
 @RequestMapping("/payments")
-@RequiredArgsConstructor
 public class PaymentController {
 
+	@Autowired
 	private PaymentService paymentService;
 
 	@PostMapping

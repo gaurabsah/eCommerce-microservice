@@ -2,6 +2,7 @@ package com.product.controller;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -18,14 +19,13 @@ import com.product.dto.ProductDTO;
 import com.product.service.ProductService;
 
 import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/api/products")
-@RequiredArgsConstructor
+@RequestMapping("/products")
 public class ProductController {
 
-	private final ProductService productService;
+	@Autowired
+	private ProductService productService;
 
 	@PostMapping("/create")
 	public ResponseEntity<ProductDTO> createProduct(@Valid @RequestBody ProductDTO productDto) {

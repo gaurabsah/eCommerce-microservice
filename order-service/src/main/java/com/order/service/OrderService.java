@@ -8,7 +8,7 @@ public interface OrderService {
 
 	OrderDTO createOrder(OrderDTO order);
 
-	List<OrderDTO> getOrdersByUser(Long userId);
+	List<OrderDTO> getOrdersByUser(String userId);
 
 	OrderDTO getOrderById(Long orderId);
 

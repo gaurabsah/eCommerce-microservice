@@ -8,8 +8,8 @@ public interface CartItemService {
 
 	CartItemDTO addToCart(CartItemDTO item);
 
-//	List<CartItemDTO> getCartItems(Long userId);
-//
-//	void clearCart(Long userId);
+	List<CartItemDTO> getCartItems(String userId);
+
+	void clearCart(String userId);
 
 }

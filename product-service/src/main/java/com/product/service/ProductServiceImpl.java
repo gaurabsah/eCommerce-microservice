@@ -17,14 +17,17 @@ import com.product.dto.ProductDTO;
 import com.product.entity.Product;
 import com.product.exception.ResourceNotFoundException;
 
-import lombok.RequiredArgsConstructor;
 
 @Service
-@RequiredArgsConstructor
 public class ProductServiceImpl implements ProductService {
 
 	private final ProductDAO dao;
 	private final ModelMapper modelMapper;
+
+	public ProductServiceImpl(ProductDAO dao, ModelMapper modelMapper) {
+		this.dao = dao;
+		this.modelMapper = modelMapper;
+	}
 
 	private static final Logger log = LoggerFactory.getLogger(ProductServiceImpl.class);
 

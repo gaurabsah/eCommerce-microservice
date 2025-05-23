@@ -16,14 +16,15 @@ import org.springframework.web.bind.annotation.RestController;
 import com.order.dto.OrderDTO;
 import com.order.service.OrderService;
 
-import lombok.RequiredArgsConstructor;
-
 @RestController
 @RequestMapping("/orders")
-@RequiredArgsConstructor
 public class OrderController {
 
 	private final OrderService orderService;
+
+	public OrderController(OrderService orderService) {
+		this.orderService = orderService;
+	}
 
 	@PostMapping
 	public ResponseEntity<OrderDTO> createOrder(@RequestBody OrderDTO order) {
@@ -32,7 +33,7 @@ public class OrderController {
 	}
 
 	@GetMapping("/user/{userId}")
-	public ResponseEntity<List<OrderDTO>> getOrdersByUser(@PathVariable Long userId) {
+	public ResponseEntity<List<OrderDTO>> getOrdersByUser(@PathVariable String userId) {
 		List<OrderDTO> ordersByUser = orderService.getOrdersByUser(userId);
 		return new ResponseEntity<>(ordersByUser, HttpStatus.FOUND);
 	}
