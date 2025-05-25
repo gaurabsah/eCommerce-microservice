@@ -4,10 +4,10 @@ import java.util.Optional;
 
 import org.springframework.data.mongodb.repository.MongoRepository;
 
-import com.user.entity.User;
+import com.user.entity.Users;
 
-public interface UserDAO extends MongoRepository<User, String>{
+public interface UserDAO extends MongoRepository<Users, String> {
 
-	Optional<User> findByEmail(String email);
+	Optional<Users> findByUsername(String username);
 
 }

@@ -1,11 +1,14 @@
 package com.user.service;
 
+import java.util.Map;
+
 import com.user.dto.UserDTO;
 
 public interface UserService {
-	
-	UserDTO createUser(UserDTO user);
-	UserDTO getUserById(String Id);
-	UserDTO getUserByEmail(String email);
 
+	String registerUser(UserDTO user);
+
+	Map<String, Object> login(String username, String password);
+
+	UserDTO getUser(String id);
 }

@@ -3,6 +3,8 @@ package com.payment.service;
 import java.time.LocalDateTime;
 
 import org.modelmapper.ModelMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import com.payment.dao.PaymentDAO;
@@ -12,11 +14,15 @@ import com.payment.exception.ResourcesNotFoundException;
 import com.payment.exception.SomethingWentWrongException;
 import com.payment.helper.RemoteServiceHelper;
 
+import jakarta.transaction.Transactional;
+
 @Service
 public class PaymentServiceImpl implements PaymentService {
 	private final PaymentDAO dao;
 	private final ModelMapper modelMapper;
 	private final RemoteServiceHelper remoteServiceHelper;
+	
+	private static final Logger log = LoggerFactory.getLogger(PaymentServiceImpl.class);
 
 	public PaymentServiceImpl(PaymentDAO dao, ModelMapper modelMapper, RemoteServiceHelper remoteServiceHelper) {
 		this.dao = dao;
@@ -24,8 +30,10 @@ public class PaymentServiceImpl implements PaymentService {
 		this.remoteServiceHelper = remoteServiceHelper;
 	}
 
+	@Transactional
 	@Override
 	public PaymentDTO processPayment(PaymentDTO dto) {
+		log.info("inside processPayment()");
 //		Payment payment = modelMapper.map(dto, Payment.class);
 		Payment payment = new Payment();
 		payment.setAmount(dto.getAmount());
@@ -40,10 +48,13 @@ public class PaymentServiceImpl implements PaymentService {
 			payment.setStatus("FAILED");
 		}
 		Payment paid = dao.save(payment);
+		log.info("Payment saved successfully...");
 
 		// Update order status after successful payment
 		try {
+			log.info("updating the status of order...");
 			remoteServiceHelper.updateOrderStatus(payment.getOrderId(), payment.getStatus());
+			log.info("the status of order is updated...");
 		} catch (Exception e) {
 			throw new SomethingWentWrongException("Failed to update order status: " + e.getMessage());
 		}

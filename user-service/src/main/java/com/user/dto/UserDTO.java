@@ -1,38 +1,34 @@
 package com.user.dto;
 
-import java.util.List;
-
 public class UserDTO {
-	private String name;
-	private String email;
+	private String username;
+
 	private String password;
-	private List<String> roles;
+
+	private String firstName;
+
+	private String lastName;
+
+	private String role;
 
 	public UserDTO() {
 
 	}
 
-	public UserDTO(String name, String email, String password, List<String> roles) {
-		this.name = name;
-		this.email = email;
+	public UserDTO(String username, String password, String firstName, String lastName, String role) {
+		this.username = username;
 		this.password = password;
-		this.roles = roles;
+		this.firstName = firstName;
+		this.lastName = lastName;
+		this.role = role;
 	}
 
-	public String getName() {
-		return name;
+	public String getUsername() {
+		return username;
 	}
 
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public String getEmail() {
-		return email;
-	}
-
-	public void setEmail(String email) {
-		this.email = email;
+	public void setUsername(String username) {
+		this.username = username;
 	}
 
 	public String getPassword() {
@@ -43,17 +39,34 @@ public class UserDTO {
 		this.password = password;
 	}
 
-	public List<String> getRoles() {
-		return roles;
+	public String getFirstName() {
+		return firstName;
 	}
 
-	public void setRoles(List<String> roles) {
-		this.roles = roles;
+	public void setFirstName(String firstName) {
+		this.firstName = firstName;
+	}
+
+	public String getLastName() {
+		return lastName;
+	}
+
+	public void setLastName(String lastName) {
+		this.lastName = lastName;
+	}
+
+	public String getRole() {
+		return role;
+	}
+
+	public void setRole(String role) {
+		this.role = role;
 	}
 
 	@Override
 	public String toString() {
-		return "UserDTO [name=" + name + ", email=" + email + ", password=" + password + ", roles=" + roles + "]";
+		return "User [username=" + username + ", password=" + password + ", firstName=" + firstName + ", lastName="
+				+ lastName + ", role=" + role + "]";
 	}
 
 }

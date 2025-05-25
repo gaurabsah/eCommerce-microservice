@@ -32,8 +32,8 @@ spring:
           predicates:
             - Path=/payments/**
 
-#      default-filters:
-#        - name: JwtAuthenticationFilter
+          filters:
+            - AuthenticationPreFilter
         
         
   config:
@@ -44,5 +44,5 @@ eureka:
     service-url:
       defaultZone: http://localhost:8761/eureka
 
-#jwt:
-#  secret: mysecretkey123456
+gateway:
+  excludedUrl: /users/**

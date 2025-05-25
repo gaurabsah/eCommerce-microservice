@@ -4,6 +4,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import org.modelmapper.ModelMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import com.order.dao.OrderDAO;
@@ -13,12 +15,16 @@ import com.order.exception.SomethingWentWrongException;
 import com.order.helper.RemoteServiceHelper;
 import com.order.model.Order;
 
+import jakarta.transaction.Transactional;
+
 @Service
 public class OrderServiceImpl implements OrderService {
 
 	private final OrderDAO orderDAO;
 	private final ModelMapper modelMapper;
 	private final RemoteServiceHelper helper;
+	
+	private static final Logger log = LoggerFactory.getLogger(OrderServiceImpl.class);
 
 	public OrderServiceImpl(OrderDAO orderDAO, ModelMapper modelMapper, RemoteServiceHelper helper) {
 		this.orderDAO = orderDAO;
@@ -26,9 +32,11 @@ public class OrderServiceImpl implements OrderService {
 		this.helper = helper;
 	}
 
+	@Transactional
 	@Override
 	public OrderDTO createOrder(OrderDTO orderDTO) {
 //		Order order = modelMapper.map(orderDTO, Order.class);
+		log.info("inside createOrder()");
 		Order order = new Order();
 		order.setProductIds(orderDTO.getProductIds());
 		order.setTotalAmount(orderDTO.getTotalAmount());
@@ -36,9 +44,11 @@ public class OrderServiceImpl implements OrderService {
 		order.setCreatedAt(LocalDateTime.now());
 		order.setStatus("PENDING");
 		Order savedOrder = orderDAO.save(order);
+		log.info("Order saved successfully...");
 		// Clear the cart after placing the order
 		try {
-			helper.clearCart(order.getUserId());
+			helper.clearCart(orderDTO.getUserId());
+			log.info("Cart cleared successfully...)");
 		} catch (Exception e) {
 			throw new SomethingWentWrongException("Failed to clear cart for user:" + order.getUserId());
 		}
