@@ -50,9 +50,9 @@ public class OrderController {
 
 	@PutMapping("/update-status")
 	@PreAuthorize("hasAnyRole('ADMIN', 'USER')")
-	public ResponseEntity<String> updateOrderStatus(@RequestParam Long orderId, @RequestParam String status) {
-		String updateOrderStatus = orderService.updateOrderStatus(orderId, status);
-		return new ResponseEntity<String>(updateOrderStatus, HttpStatus.CREATED);
+	public ResponseEntity<OrderDTO> updateOrderStatus(@RequestParam Long orderId, @RequestParam String status) {
+		OrderDTO updateOrderStatus = orderService.updateOrderStatus(orderId, status);
+		return new ResponseEntity<OrderDTO>(updateOrderStatus, HttpStatus.OK);
 	}
 
 }

@@ -43,6 +43,14 @@ eureka:
   client:
     service-url:
       defaultZone: http://localhost:8761/eureka
-
+      
 gateway:
-  excludedUrl: /users/**
+  excludedUrl: /users/register, /users/login
+
+management:
+  zipkin:
+    tracing:
+      endpoint: http://localhost:9411
+  tracing:
+    sampling:
+      probability: 1.0

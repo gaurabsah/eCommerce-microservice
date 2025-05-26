@@ -33,7 +33,7 @@ public class CartController {
 		return new ResponseEntity<CartItemDTO>(addToCart, HttpStatus.CREATED);
 	}
 
-	@GetMapping("/user/{userId}")
+	@GetMapping("/{userId}")
 	@PreAuthorize("hasAnyRole('ADMIN', 'USER')")
 	public ResponseEntity<List<CartItemDTO>> getCartItems(@PathVariable String userId) {
 		List<CartItemDTO> cartItems = cartItemService.getCartItems(userId);

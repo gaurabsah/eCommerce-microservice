@@ -17,7 +17,6 @@ import com.product.dto.ProductDTO;
 import com.product.entity.Product;
 import com.product.exception.ResourceNotFoundException;
 
-
 @Service
 public class ProductServiceImpl implements ProductService {
 
@@ -83,6 +82,16 @@ public class ProductServiceImpl implements ProductService {
 				.collect(Collectors.toList());
 		log.info("Products found: {}", productDtos.size());
 		return productDtos;
+	}
+
+	@Override
+	public ProductDTO updateProductStock(Long productId, int stock) {
+		log.info("inside getProduct()");
+		Product product = dao.findById(productId).orElseThrow(() -> new ResourceNotFoundException("Product not found"));
+		log.info("Product Details fetched successfully {}", product);
+		product.setStock(stock);
+		Product updatedproduct = dao.save(product);
+		return modelMapper.map(updatedproduct, ProductDTO.class);
 	}
 
 }

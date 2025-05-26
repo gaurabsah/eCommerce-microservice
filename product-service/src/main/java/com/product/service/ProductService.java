@@ -16,5 +16,6 @@ public interface ProductService {
 
     List<ProductDTO> getAllProducts(int pageNumber, int pageSize, String sortBy, String sortOrder);
 
+    ProductDTO updateProductStock(Long productId, int stock);
 
 }

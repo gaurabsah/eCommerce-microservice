@@ -18,9 +18,6 @@ public class FeignConfig implements RequestInterceptor {
             String token = servletRequestAttributes.getRequest().getHeader("Authorization");
             if (token != null) {
                 template.header("Authorization", token);
-                System.out.println("Passing JWT token to user-service: " + token);
-            } else {
-                System.out.println("JWT token not found in request attributes.");
             }
         }
     }

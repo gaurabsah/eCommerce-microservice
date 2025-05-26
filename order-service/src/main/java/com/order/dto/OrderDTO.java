@@ -8,18 +8,19 @@ public class OrderDTO {
 	private double totalAmount;
 	private LocalDateTime createdAt;
 	private String status;
-	private List<Long> productIds;
+	private List<OrderItemDTO> items;
 
 	public OrderDTO() {
 
 	}
 
-	public OrderDTO(String userId, double totalAmount, LocalDateTime createdAt, String status, List<Long> productIds) {
+	public OrderDTO(String userId, double totalAmount, LocalDateTime createdAt, String status,
+			List<OrderItemDTO> items) {
 		this.userId = userId;
 		this.totalAmount = totalAmount;
 		this.createdAt = createdAt;
 		this.status = status;
-		this.productIds = productIds;
+		this.items = items;
 	}
 
 	public String getUserId() {
@@ -54,18 +55,18 @@ public class OrderDTO {
 		this.status = status;
 	}
 
-	public List<Long> getProductIds() {
-		return productIds;
+	public List<OrderItemDTO> getItems() {
+		return items;
 	}
 
-	public void setProductIds(List<Long> productIds) {
-		this.productIds = productIds;
+	public void setItems(List<OrderItemDTO> items) {
+		this.items = items;
 	}
 
 	@Override
 	public String toString() {
 		return "OrderDTO [userId=" + userId + ", totalAmount=" + totalAmount + ", createdAt=" + createdAt + ", status="
-				+ status + ", productIds=" + productIds + "]";
+				+ status + ", items=" + items + "]";
 	}
 
 }

@@ -84,8 +84,8 @@ public class AuthenticationPreFilter extends AbstractGatewayFilterFactory<Authen
                         .getBody();
 
                 String username = claims.getSubject();
-//                String role = claims.get("role").toString();
-                String role = (claims.get("role") != null) ? claims.get("role").toString() : "USER";
+                String role = claims.get("role").toString();
+//                String role = (claims.get("role") != null) ? claims.get("role").toString() : "USER";
 
                 ServerHttpRequest mutatedRequest = request.mutate()
                         .header("username", username)

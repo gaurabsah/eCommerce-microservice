@@ -2,56 +2,60 @@ package com.order.service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.order.dao.OrderDAO;
 import com.order.dto.OrderDTO;
+import com.order.dto.OrderItemDTO;
+import com.order.dto.ProductDTO;
 import com.order.exception.ResourcesNotFoundException;
-import com.order.exception.SomethingWentWrongException;
 import com.order.helper.RemoteServiceHelper;
 import com.order.model.Order;
-
-import jakarta.transaction.Transactional;
 
 @Service
 public class OrderServiceImpl implements OrderService {
 
 	private final OrderDAO orderDAO;
 	private final ModelMapper modelMapper;
-	private final RemoteServiceHelper helper;
-	
+
 	private static final Logger log = LoggerFactory.getLogger(OrderServiceImpl.class);
 
-	public OrderServiceImpl(OrderDAO orderDAO, ModelMapper modelMapper, RemoteServiceHelper helper) {
+	public OrderServiceImpl(OrderDAO orderDAO, ModelMapper modelMapper) {
 		this.orderDAO = orderDAO;
 		this.modelMapper = modelMapper;
-		this.helper = helper;
 	}
+	
+	@Autowired
+	private RemoteServiceHelper remoteServiceHelper;
 
-	@Transactional
 	@Override
 	public OrderDTO createOrder(OrderDTO orderDTO) {
-//		Order order = modelMapper.map(orderDTO, Order.class);
 		log.info("inside createOrder()");
+
+		double total = 0;
+
+		for (OrderItemDTO item : orderDTO.getItems()) {
+			ProductDTO product = remoteServiceHelper.getProduct(item.getProductId());
+			total += product.getProductPrice() * item.getQuantity();
+		}
+
 		Order order = new Order();
-		order.setProductIds(orderDTO.getProductIds());
-		order.setTotalAmount(orderDTO.getTotalAmount());
 		order.setUserId(orderDTO.getUserId());
 		order.setCreatedAt(LocalDateTime.now());
 		order.setStatus("PENDING");
+		order.setTotalAmount(total);
+		order.setProductIds(orderDTO.getItems()
+				.stream().map(OrderItemDTO::getProductId)
+				.collect(Collectors.toList()));
+
 		Order savedOrder = orderDAO.save(order);
 		log.info("Order saved successfully...");
-		// Clear the cart after placing the order
-		try {
-			helper.clearCart(orderDTO.getUserId());
-			log.info("Cart cleared successfully...)");
-		} catch (Exception e) {
-			throw new SomethingWentWrongException("Failed to clear cart for user:" + order.getUserId());
-		}
 
 		return modelMapper.map(savedOrder, OrderDTO.class);
 	}
@@ -69,11 +73,11 @@ public class OrderServiceImpl implements OrderService {
 	}
 
 	@Override
-	public String updateOrderStatus(Long orderId, String status) {
+	public OrderDTO updateOrderStatus(Long orderId, String status) {
 		Order order = orderDAO.findById(orderId).orElseThrow(() -> new ResourcesNotFoundException("Order not found"));
 		order.setStatus(status);
-		orderDAO.save(order);
-		return "Order status updated to" + status;
+		Order updatedOrder = orderDAO.save(order);
+		return modelMapper.map(updatedOrder, OrderDTO.class);
 	}
 
 }
