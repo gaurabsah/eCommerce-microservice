@@ -1,0 +1,26 @@
+version: '3.8'
+
+services:
+  api-gateway:
+    image: api-gateway:latest
+    container_name: api-gateway
+    ports:
+      - "8888:8888"
+    environment:
+      SPRING_APPLICATION_NAME: api-gateway
+      SERVER_PORT: 8888
+
+      # Eureka config to locate microservices
+      EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE: http://discovery-server:8761/eureka/
+
+      # Optional: tracing configs if you use Zipkin
+      MANAGEMENT_TRACING_ENABLED: true
+      MANAGEMENT_TRACING_SAMPLING_PROBABILITY: 1.0
+      MANAGEMENT_ZIPKIN_TRACING_ENDPOINT: http://zipkin:9411/api/v2/spans
+
+    networks:
+      - microservice-net
+
+networks:
+  microservice-net:
+    external: true

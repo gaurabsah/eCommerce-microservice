@@ -1,0 +1,44 @@
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: mysql
+    environment:
+      MYSQL_DATABASE: cartdb
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - "3307:3306"  # Host port 3307 mapped to container 3306
+    networks:
+      - microservice-net
+
+  cart-service:
+    image: cart-service:latest
+    container_name: cart-service
+    depends_on:
+      - mysql
+    environment:
+      SPRING_APPLICATION_NAME: cart-service
+      SERVER_PORT: 8082
+
+      # MySQL configuration
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/cartdb
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: root
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT: org.hibernate.dialect.MySQL8Dialect
+
+      # Eureka discovery server
+      EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE: http://discovery-server:8761/eureka/
+
+      # Zipkin tracing
+      MANAGEMENT_TRACING_ENABLED: true
+      MANAGEMENT_TRACING_SAMPLING_PROBABILITY: 1.0
+      MANAGEMENT_ZIPKIN_TRACING_ENDPOINT: http://zipkin:9411/api/v2/spans
+
+    ports:
+      - "8082:8082"
+    networks:
+      - microservice-net
+
+networks:
+  microservice-net:
+    external: true

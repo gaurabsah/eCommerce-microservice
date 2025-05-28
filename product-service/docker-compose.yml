@@ -1,0 +1,48 @@
+
+services:
+  postgres:
+    image: postgres:15
+    container_name: postgres
+    environment:
+      POSTGRES_DB: productDB
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5433:5432"
+    networks:
+      - microservice-net
+
+  zipkin:
+    image: openzipkin/zipkin
+    container_name: zipkin
+    ports:
+      - "9411:9411"
+    networks:
+      - microservice-net
+
+  product-service:
+    image: product-service:latest
+    container_name: product-service
+    depends_on:
+      - zipkin
+      - postgres
+    environment:
+      SPRING_APPLICATION_NAME: product-service
+      SERVER_PORT: 8081
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/productDB
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT: org.hibernate.dialect.PostgreSQLDialect
+      EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE: http://discovery-server:8761/eureka/
+      MANAGEMENT_TRACING_ENABLED: true
+      MANAGEMENT_TRACING_SAMPLING_PROBABILITY: 1.0
+      MANAGEMENT_ZIPKIN_TRACING_ENDPOINT: http://zipkin:9411/api/v2/spans
+    ports:
+      - "8081:8081"
+    networks:
+      - microservice-net
+
+networks:
+  microservice-net:
+    external: true

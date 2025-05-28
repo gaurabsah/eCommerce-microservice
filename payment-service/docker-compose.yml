@@ -1,0 +1,46 @@
+version: '3.8'
+
+services:
+  postgres-payment:
+    image: postgres:15
+    container_name: postgres-payment
+    environment:
+      POSTGRES_DB: paymentDB
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5435:5432"  # host:container
+    networks:
+      - microservice-net
+
+  payment-service:
+    image: payment-service:latest
+    container_name: payment-service
+    ports:
+      - "8085:8085"
+    depends_on:
+      - postgres-payment
+    environment:
+      SPRING_APPLICATION_NAME: payment-service
+      SERVER_PORT: 8085
+
+      # PostgreSQL DB config
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres-payment:5432/paymentDB
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT: org.hibernate.dialect.PostgreSQLDialect
+
+      # Eureka Discovery
+      EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE: http://discovery-server:8761/eureka/
+
+      # Zipkin Tracing
+      MANAGEMENT_TRACING_ENABLED: true
+      MANAGEMENT_TRACING_SAMPLING_PROBABILITY: 1.0
+      MANAGEMENT_ZIPKIN_TRACING_ENDPOINT: http://zipkin:9411/api/v2/spans
+    networks:
+      - microservice-net
+
+networks:
+  microservice-net:
+    external: true

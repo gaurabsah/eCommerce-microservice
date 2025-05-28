@@ -1,0 +1,37 @@
+services:
+  mongo:
+    image: mongo:6.0
+    container_name: mongo
+    ports:
+      - "27017:27017"
+    networks:
+      - microservice-net
+
+  user-service:
+    image: user-service:latest
+    container_name: user-service
+    depends_on:
+      - mongo
+    environment:
+      SPRING_APPLICATION_NAME: user-service
+      SERVER_PORT: 8083
+
+      # MongoDB configuration
+      SPRING_DATA_MONGODB_URI: mongodb://mongo:27017/userdb
+
+      # Eureka discovery service
+      EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE: http://discovery-server:8761/eureka/
+
+      # Zipkin tracing
+      MANAGEMENT_TRACING_ENABLED: true
+      MANAGEMENT_TRACING_SAMPLING_PROBABILITY: 1.0
+      MANAGEMENT_ZIPKIN_TRACING_ENDPOINT: http://zipkin:9411/api/v2/spans
+
+    ports:
+      - "8083:8083"
+    networks:
+      - microservice-net
+
+networks:
+  microservice-net:
+    external: true

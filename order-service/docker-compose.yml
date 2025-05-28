@@ -1,0 +1,78 @@
+#version: '3.8'
+
+services:
+  postgres-order:
+    image: postgres:15
+    container_name: postgres-order
+    environment:
+      POSTGRES_DB: orderDB
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5434:5432"
+    networks:
+      - microservice-net
+
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.3.2
+    container_name: zookeeper
+    ports:
+      - "2181:2181"
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    networks:
+      - microservice-net
+
+  kafka:
+    image: confluentinc/cp-kafka:7.3.2
+    container_name: kafka
+    ports:
+      - "9092:9092"
+    depends_on:
+      - zookeeper
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092,PLAINTEXT_HOST://localhost:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:29092,PLAINTEXT_HOST://0.0.0.0:9092
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+    networks:
+      - microservice-net
+
+  order-service:
+    image: order-service:latest
+    container_name: order-service
+    ports:
+      - "8084:8084"
+    depends_on:
+      - kafka
+      - postgres-order
+    environment:
+      SPRING_APPLICATION_NAME: order-service
+      SERVER_PORT: 8084
+
+      # PostgreSQL DB config
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres-order:5432/orderDB
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT: org.hibernate.dialect.PostgreSQLDialect
+
+      # Kafka config
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:29092
+
+      # Eureka (optional)
+      EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE: http://discovery-server:8761/eureka/
+
+      # Zipkin tracing (optional)
+      MANAGEMENT_TRACING_ENABLED: true
+      MANAGEMENT_TRACING_SAMPLING_PROBABILITY: 1.0
+      MANAGEMENT_ZIPKIN_TRACING_ENDPOINT: http://zipkin:9411/api/v2/spans
+    networks:
+      - microservice-net
+
+networks:
+  microservice-net:
+    external: true

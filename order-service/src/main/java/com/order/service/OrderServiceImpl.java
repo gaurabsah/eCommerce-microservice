@@ -8,12 +8,14 @@ import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
 import com.order.dao.OrderDAO;
 import com.order.dto.OrderDTO;
 import com.order.dto.OrderItemDTO;
 import com.order.dto.ProductDTO;
+import com.order.event.OrderPlacedEvent;
 import com.order.exception.ResourcesNotFoundException;
 import com.order.helper.RemoteServiceHelper;
 import com.order.model.Order;
@@ -30,6 +32,9 @@ public class OrderServiceImpl implements OrderService {
 		this.orderDAO = orderDAO;
 		this.modelMapper = modelMapper;
 	}
+	
+	@Autowired
+	private KafkaTemplate<String,OrderPlacedEvent> kafkaTemplate;
 	
 	@Autowired
 	private RemoteServiceHelper remoteServiceHelper;
@@ -56,6 +61,8 @@ public class OrderServiceImpl implements OrderService {
 
 		Order savedOrder = orderDAO.save(order);
 		log.info("Order saved successfully...");
+		
+		kafkaTemplate.send("notificationTopic",new OrderPlacedEvent(savedOrder.getId()));
 
 		return modelMapper.map(savedOrder, OrderDTO.class);
 	}
